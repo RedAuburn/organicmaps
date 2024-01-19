@@ -736,16 +736,18 @@ void Processor::SearchPlusCode()
     if (codeFromView != codeFromPos)
     {
       openlocationcode::CodeArea const areaFromView = openlocationcode::Decode(codeFromView);
+      m2::PointD viewPoint = m2::PointD(areaFromView.GetCenter().latitude, areaFromView.GetCenter().longitude);
       m_emitter.AddResultNoChecks(
-              m_ranker.MakeResult(RankerResult(areaFromView.GetCenter().latitude, areaFromView.GetCenter().longitude),
+              m_ranker.MakeResult(RankerResult(viewPoint, "based on view"),
                                   true /* needAddress */, true /* needHighlighting */));
     }
 
     if (!latLonFromPos.EqualDxDy({0, 0}, 0.00001)) // TODO: better way to check if no location found?
     {
       openlocationcode::CodeArea const areaFromPos = openlocationcode::Decode(codeFromPos);
+      m2::PointD posPoint = m2::PointD(areaFromPos.GetCenter().latitude, areaFromPos.GetCenter().longitude);
       m_emitter.AddResultNoChecks(
-              m_ranker.MakeResult(RankerResult(areaFromPos.GetCenter().latitude, areaFromPos.GetCenter().longitude),
+              m_ranker.MakeResult(RankerResult(posPoint, "based on position"),
                                   true /* needAddress */, false /* needHighlighting */));
     }
   }
