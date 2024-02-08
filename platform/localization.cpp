@@ -18,8 +18,8 @@ enum class MeasurementType
 
 const LocalizedUnits & GetLocalizedUnits(measurement_utils::Units units, MeasurementType measurementType)
 {
-  static LocalizedUnits UnitsLenghImperial = {GetLocalizedString("ft"), GetLocalizedString("mi")};
-  static LocalizedUnits UnitsLenghMetric = {GetLocalizedString("m"), GetLocalizedString("km")};
+  static LocalizedUnits UnitsLengthImperial = {GetLocalizedString("ft"), GetLocalizedString("mi")};
+  static LocalizedUnits UnitsLengthMetric = {GetLocalizedString("m"), GetLocalizedString("km")};
 
   static LocalizedUnits UnitsSpeedImperial = {GetLocalizedString("ft"), GetLocalizedString("miles_per_hour")};
   static LocalizedUnits UnitsSpeedMetric = {GetLocalizedString("m"), GetLocalizedString("kilometers_per_hour")};
@@ -30,8 +30,8 @@ const LocalizedUnits & GetLocalizedUnits(measurement_utils::Units units, Measure
   case MeasurementType::Altitude:
     switch (units)
     {
-    case measurement_utils::Units::Imperial: return UnitsLenghImperial;
-    case measurement_utils::Units::Metric: return UnitsLenghMetric;
+    case measurement_utils::Units::Imperial: return UnitsLengthImperial;
+    case measurement_utils::Units::Metric: return UnitsLengthMetric;
     }
     break;
   case MeasurementType::Speed:
@@ -64,4 +64,32 @@ std::string GetLocalizedSpeedUnits()
 {
   return GetLocalizedSpeedUnits(measurement_utils::GetMeasurementUnits());
 }
+
+///old stuff
+
+std::string GetLocalizedTypeName(std::string const & type)
+{
+  return "wowlocalizedbrandname";
+}
+
+std::string GetLocalizedBrandName(std::string const & brand)
+{
+  return "wowlocalizedbrandname";
+}
+
+std::string GetLocalizedString(std::string const & key)
+{
+  return "wowlocalizedstring";
+}
+
+std::string GetCurrencySymbol(std::string const & currencyCode)
+{
+  return "wowcurrencysymbol";
+}
+
+std::string GetLocalizedMyPositionBookmarkName()
+{
+  return "wowlocalizedpositionbookmarkname";
+}
+
 }  // namespace platform
