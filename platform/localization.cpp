@@ -3,7 +3,10 @@
 #include "platform/measurement_utils.hpp"
 #include "platform/settings.hpp"
 
+#include <filesystem>
 #include <string>
+#include <iostream>
+#include <fstream>
 
 namespace platform
 {
@@ -43,6 +46,18 @@ const LocalizedUnits & GetLocalizedUnits(measurement_utils::Units units, Measure
   }
   UNREACHABLE();
 }
+
+std::string parseLocalizationString(std::string locale, std::string key)
+{
+  std::string buildPath;
+  buildPath = filesystem::exists("/res/values/") ? "true" : "False";
+
+  std::ifstream stringsFile("android/app/src/main/res/values-hi/strings.xml");
+  std::stringstream buffer;
+  buffer << stringsFile.rdbuf();
+  return buildPath;
+}
+
 }  // namespace
 
 LocalizedUnits GetLocalizedDistanceUnits()
@@ -65,11 +80,12 @@ std::string GetLocalizedSpeedUnits()
   return GetLocalizedSpeedUnits(measurement_utils::GetMeasurementUnits());
 }
 
-///old stuff
+//old stuff
 
-std::string GetLocalizedTypeName(std::string const & type)
+std::string GetLocalizedTypeName(std::string const & poiType)
 {
-  return "wowlocalizedbrandname";
+  return parseLocalizationString("en", "hello");
+  //return poiType;
 }
 
 std::string GetLocalizedBrandName(std::string const & brand)
