@@ -1,5 +1,5 @@
 #include "platform/localization.hpp"
-
+#include "platform/get_text_by_id.hpp"
 #include "platform/measurement_utils.hpp"
 #include "platform/settings.hpp"
 
@@ -95,6 +95,7 @@ std::string GetLocalizedBrandName(std::string const & brand)
 
 std::string GetLocalizedString(std::string const & key)
 {
+  return languages::GetCurrentTwine(key);
   return "wowlocalizedstring";
 }
 
