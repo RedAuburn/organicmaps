@@ -333,7 +333,19 @@ area|z14-[highway=pedestrian][area?],
 area|z14-[area:highway=pedestrian],
 area|z14-[highway=footway][area?],
 area|z14-[area:highway=footway],
+area|z14-[area:highway=steps],
+area|z14-[area:highway=cycleway],
 area|z14-[area:highway=living_street],
+area|z14-[area:highway=motorway],
+area|z14-[area:highway=trunk],
+area|z14-[area:highway=tertiary],
+area|z14-[area:highway=secondary],
+area|z14-[area:highway=primary],
+area|z14-[area:highway=unclassified],
+area|z14-[area:highway=residential],
+area|z14-[area:highway=service],
+area|z14-[area:highway=path],
+area|z14-[area:highway=track],
 area|z14-[amenity=grave_yard],
 area|z14-[landuse=cemetery],
 area|z14-[amenity=university],
@@ -429,6 +441,27 @@ area|z16-[area:highway=footway],
 area|z16-[area:highway=living_street],
 {fill-color: @pedestrian_area_light;}
 
+/* 7.55 Road Areas */
+area|z14-[area:highway=steps],
+area|z14-[area:highway=cycleway],
+{fill-color: @white;}
+area|z14-[area:highway=motorway],
+area|z14-[area:highway=trunk],
+{fill-color: @trunk0;}
+area|z14-[area:highway=tertiary],
+{fill-color: @tertiary;}
+area|z14-[area:highway=secondary],
+{fill-color: @secondary0;}
+area|z14-[area:highway=primary],
+{fill-color: @primary0;}
+area|z14-[area:highway=unclassified],
+area|z14-[area:highway=residential],
+area|z14-[area:highway=service],
+{fill-color: @residential;}
+area|z14-[area:highway=path],
+{fill-color: @path;}
+area|z14-[area:highway=track],
+{fill-color: @track;}
 /* 7.6 Airports */
 
 area|z10[aeroway=aerodrome][aerodrome=international],
