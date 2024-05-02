@@ -1,6 +1,7 @@
 package app.organicmaps.editor;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -66,12 +67,20 @@ public class ProfileFragment extends BaseMwmToolbarFragment
           UiUtils.show(mProfileInfoLoading);
           UiUtils.hide(mUserInfoBlock);
         }
-        final int count = OsmOAuth.getOsmChangesetsCount(requireContext(), getParentFragmentManager());
-        final String username = OsmOAuth.getUsername(requireContext());
+        final int profileEditCount = OsmOAuth.getOsmChangesetsCount(requireContext(), getParentFragmentManager());
+        final String profileUsername = OsmOAuth.getUsername(requireContext());
+        final Bitmap profilePicture = OsmOAuth.getProfilePicture(requireContext());
 
         UiThread.run(() -> {
-          mEditsSent.setText(NumberFormat.getInstance().format(count));
-          mProfileName.setText(username);
+          mEditsSent.setText(NumberFormat.getInstance().format(profileEditCount));
+          mProfileName.setText(profileUsername);
+
+          // use generic img if user has no pfp or couldn't load
+          if(profilePicture != null)
+            mProfileImage.setImageBitmap(profilePicture);
+          else
+            mProfileImage.setImageResource(R.drawable.profile_generic);
+
           UiUtils.show(mUserInfoBlock);
           UiUtils.hide(mProfileInfoLoading);
         });
