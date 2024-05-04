@@ -10,6 +10,8 @@
 #include "editor/osm_auth.hpp"
 #include "editor/server_api.hpp"
 
+#include "platform/remote_file.hpp"
+
 namespace
 {
 using namespace osm;
@@ -71,11 +73,38 @@ Java_app_organicmaps_editor_OsmOAuth_nativeGetOsmChangesetsCount(JNIEnv * env, j
 }
 
 JNIEXPORT jstring JNICALL
-Java_app_organicmaps_editor_OsmOAuth_nativeGetOsmProfilePictureUrl(JNIEnv * env, jclass, jstring oauthToken)
+Java_app_organicmaps_editor_OsmOAuth_nativeGetOsmProfilePicture(JNIEnv * env, jclass, jstring oauthToken, jstring appDir)
 {
   UserPreferences prefs;
+  std::string imageName = jni::ToNativeString(env, appDir);
   if (LoadOsmUserPreferences(jni::ToNativeString(env, oauthToken), prefs))
-    return jni::ToJavaString(env, prefs.m_imageUrl);
+  {
+    //TODO: how to handle filetypes? what filetypes does osm support
+    std::string filePath = imageName + "/profile_picture.jpg";
+    //std::string imageUrl = prefs.m_imageUrl;
+    std::string imageUrl = "https://avatars.githubusercontent.com/u/76659619?s=200&v=4";
+
+    platform::RemoteFile remoteImage = platform::RemoteFile(imageUrl,{},{}, true);
+    platform::RemoteFile::StartDownloadingHandler startDownloadingHandler;
+
+    platform::RemoteFile::ResultHandler resultHandler = [&](platform::RemoteFile::Result result, const std::string& filePath) {
+        LOG(LWARNING,("Loading profile picture from",result.m_url));
+        if (result.m_status == platform::RemoteFile::Status::Ok)
+        {
+          //TODO: file should be written, but it's not (download lib fault?)
+          //looks like downloader can't handle 302 redirects used by osm api
+          LOG(LWARNING,("Profile picture written to file:",filePath));
+          return filePath;
+        }
+        else
+        {
+          LOG(LWARNING,("Unable to load image:", result.m_httpCode, result.m_description));
+          return std::string();
+        }
+    };
+
+    remoteImage.DownloadAsync(filePath, std::move(startDownloadingHandler), std::move(resultHandler));
+  }
   return nullptr;
 }
 
