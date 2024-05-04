@@ -2,6 +2,7 @@ package app.organicmaps.editor;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -69,15 +70,21 @@ public class ProfileFragment extends BaseMwmToolbarFragment
         }
         final int profileEditCount = OsmOAuth.getOsmChangesetsCount(requireContext(), getParentFragmentManager());
         final String profileUsername = OsmOAuth.getUsername(requireContext());
-        final Bitmap profilePicture = OsmOAuth.getProfilePicture(requireContext());
+        //final String profilePicture = OsmOAuth.getProfilePicture(requireContext());
+
+        //TODO: for testing, can't open the file even when added via root
+        final String profilePicture = "/data/user/0/app.organicmaps.beta/profile_picture.jpg";
 
         UiThread.run(() -> {
           mEditsSent.setText(NumberFormat.getInstance().format(profileEditCount));
           mProfileName.setText(profileUsername);
 
-          // use generic img if user has no pfp or couldn't load
+          //use generic img if user has no pfp or couldn't load
           if(profilePicture != null)
-            mProfileImage.setImageBitmap(profilePicture);
+          {
+            Bitmap profilePictureBitmap = BitmapFactory.decodeFile(profilePicture);
+            mProfileImage.setImageBitmap(profilePictureBitmap);
+          }
           else
             mProfileImage.setImageResource(R.drawable.profile_generic);
 

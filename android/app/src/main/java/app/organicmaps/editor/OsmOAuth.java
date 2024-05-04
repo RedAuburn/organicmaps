@@ -69,10 +69,11 @@ public final class OsmOAuth
     return MwmApplication.prefs(context).getString(PREF_OSM_USERNAME, "");
   }
 
-  public static Bitmap getProfilePicture(@NonNull Context context)
+  // get profile picture path (and download if not already)
+  public static String getProfilePicture(@NonNull Context context)
   {
-    //TODO: load and store image in cache here
-    return null;
+    String appDir = String.valueOf(context.getCacheDir());
+    return nativeGetOsmProfilePicture(getAuthToken(context), appDir);
   }
 
   public static void setAuthorization(@NonNull Context context, String oauthToken, String username)
@@ -85,6 +86,7 @@ public final class OsmOAuth
 
   public static void clearAuthorization(@NonNull Context context)
   {
+    //TODO: wipe profile picture
     MwmApplication.prefs(context).edit()
                   .remove(PREF_OSM_TOKEN)
                   .remove(PREF_OSM_SECRET)
@@ -112,7 +114,7 @@ public final class OsmOAuth
 
   @WorkerThread
   @Nullable
-  public static native String nativeGetOsmProfilePictureUrl(String oauthToken);
+  public static native String nativeGetOsmProfilePicture(String oauthToken, String appDir);
 
   @WorkerThread
   @NonNull
