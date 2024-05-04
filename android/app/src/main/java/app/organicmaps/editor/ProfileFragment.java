@@ -19,7 +19,11 @@ import app.organicmaps.base.BaseMwmToolbarFragment;
 import app.organicmaps.util.UiUtils;
 import app.organicmaps.util.concurrency.ThreadPool;
 import app.organicmaps.util.concurrency.UiThread;
+import app.organicmaps.util.log.Logger;
+
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import java.io.File;
 import java.text.NumberFormat;
 
 public class ProfileFragment extends BaseMwmToolbarFragment
@@ -70,10 +74,7 @@ public class ProfileFragment extends BaseMwmToolbarFragment
         }
         final int profileEditCount = OsmOAuth.getOsmChangesetsCount(requireContext(), getParentFragmentManager());
         final String profileUsername = OsmOAuth.getUsername(requireContext());
-        //final String profilePicture = OsmOAuth.getProfilePicture(requireContext());
-
-        //TODO: for testing, can't open the file even when added via root
-        final String profilePicture = "/data/user/0/app.organicmaps.beta/profile_picture.jpg";
+        final String profilePicture = OsmOAuth.getProfilePicture(requireContext());
 
         UiThread.run(() -> {
           mEditsSent.setText(NumberFormat.getInstance().format(profileEditCount));
