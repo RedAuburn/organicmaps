@@ -111,6 +111,8 @@ void Info::SetMercator(m2::PointD const & mercator)
 std::string Info::FormatSubtitle(bool withType) const
 {
   std::string result;
+
+  // override append to auto-add separator.
   auto const append = [&result](std::string_view sv)
   {
     if (!result.empty())
@@ -118,88 +120,103 @@ std::string Info::FormatSubtitle(bool withType) const
     result += sv;
   };
 
+  // Always add bookmark folder name first if exists
   if (IsBookmark())
     append(m_bookmarkCategoryName);
 
-  if (withType)
-    append(GetLocalizedType());
+  feature::TypesHolder copy(m_types);
+  copy.SortBySpec();
+  bool shouldRemoveType = !withType;
 
-  // Flats.
-  auto const flats = GetMetadata(feature::Metadata::FMD_FLATS);
-  if (!flats.empty())
-    append(flats);
-
-  // Cuisines.
-  for (auto const & cuisine : GetLocalizedCuisines())
-    append(cuisine);
-
-  // Recycling types.
-  for (auto const & recycling : GetLocalizedRecyclingTypes())
-    append(recycling);
-
-  // Airport IATA code.
-  auto const iata = GetMetadata(feature::Metadata::FMD_AIRPORT_IATA);
-  if (!iata.empty())
-    append(iata);
-
-  // Road numbers/ids.
-  auto const roadShields = FormatRoadShields();
-  if (!roadShields.empty())
-    append(roadShields);
-
-  // Stars.
-  auto const stars = feature::FormatStars(GetStars());
-  if (!stars.empty())
-    append(stars);
-
-  // Operator.
-  auto const op = GetMetadata(feature::Metadata::FMD_OPERATOR);
-  if (!op.empty())
-    append(op);
-
-  // Brand.
-  auto const brand = GetMetadata(feature::Metadata::FMD_BRAND);
-  if (!brand.empty() && brand != op)
+  for (auto const type : copy)
   {
-    /// @todo May not work as expected because we store raw value from OSM,
-    /// while current localizations assume to have some string ids (like "mcdonalds").
-    auto const locBrand = platform::GetLocalizedBrandName(std::string(brand));
+    // don't add type for this loop
+    if(shouldRemoveType)
+    {
+      shouldRemoveType = false;
+      continue;
+    }
 
-    // Do not duplicate for commonly used titles like McDonald's, Starbucks, etc.
-    if (locBrand != m_uiTitle && locBrand != m_uiSecondaryTitle)
-      append(locBrand);
+    auto localizedType = platform::GetLocalizedTypeName(classif().GetReadableObjectName(type));
+    append(localizedType);
   }
 
-  // Elevation.
-  auto const eleStr = feature::FormatElevation(GetMetadata(MetadataID::FMD_ELE));
-  if (!eleStr.empty())
-    append(eleStr);
-
-  // ATM
-  if (HasAtm())
-    append(feature::kAtmSymbol);
-
-  // Internet.
-  if (HasWifi())
-    append(m_localizedWifiString);
-
-  // Toilets.
-  if (HasToilets())
-    append(feature::kToiletsSymbol);
-
-  // Drinking Water
-  auto const drinkingWater = feature::FormatDrinkingWater(GetTypes());
-  if (!drinkingWater.empty())
-    append(drinkingWater);
-
-  // Wheelchair
-  if (feature::GetWheelchairType(m_types) == ftraits::WheelchairAvailability::Yes)
-    append(feature::kWheelchairSymbol);
-
-  // Fee.
-  auto const fee = GetLocalizedFeeType();
-  if (!fee.empty())
-    append(fee);
+//  // Flats.
+//  auto const flats = GetMetadata(feature::Metadata::FMD_FLATS);
+//  if (!flats.empty())
+//    append(flats);
+//
+//  // Cuisines.
+//  for (auto const & cuisine : GetLocalizedCuisines())
+//    append(cuisine);
+//
+//  // Recycling types.
+//  for (auto const & recycling : GetLocalizedRecyclingTypes())
+//    append(recycling);
+//
+//  // Airport IATA code.
+//  auto const iata = GetMetadata(feature::Metadata::FMD_AIRPORT_IATA);
+//  if (!iata.empty())
+//    append(iata);
+//
+//  // Road numbers/ids.
+//  auto const roadShields = FormatRoadShields();
+//  if (!roadShields.empty())
+//    append(roadShields);
+//
+//  // Stars.
+//  auto const stars = feature::FormatStars(GetStars());
+//  if (!stars.empty())
+//    append(stars);
+//
+//  // Operator.
+//  auto const op = GetMetadata(feature::Metadata::FMD_OPERATOR);
+//  if (!op.empty())
+//    append(op);
+//
+//  // Brand.
+//  auto const brand = GetMetadata(feature::Metadata::FMD_BRAND);
+//  if (!brand.empty() && brand != op)
+//  {
+//    /// @todo May not work as expected because we store raw value from OSM,
+//    /// while current localizations assume to have some string ids (like "mcdonalds").
+//    auto const locBrand = platform::GetLocalizedBrandName(std::string(brand));
+//
+//    // Do not duplicate for commonly used titles like McDonald's, Starbucks, etc.
+//    if (locBrand != m_uiTitle && locBrand != m_uiSecondaryTitle)
+//      append(locBrand);
+//  }
+//
+//  // Elevation.
+//  auto const eleStr = feature::FormatElevation(GetMetadata(MetadataID::FMD_ELE));
+//  if (!eleStr.empty())
+//    append(eleStr);
+//
+//  // ATM
+//  if (HasAtm())
+//    append(feature::kAtmSymbol);
+//
+//  // Internet.
+//  if (HasWifi())
+//    append(m_localizedWifiString);
+//
+//  // Toilets.
+//  if (HasToilets())
+//    append(feature::kToiletsSymbol);
+//
+//  // Drinking Water
+//  auto const drinkingWater = feature::FormatDrinkingWater(GetTypes());
+//  if (!drinkingWater.empty())
+//    append(drinkingWater);
+//
+//  // Wheelchair
+//  if (feature::GetWheelchairType(m_types) == ftraits::WheelchairAvailability::Yes)
+//    append(feature::kWheelchairSymbol);
+//
+//  // Fee.
+//  auto const fee = GetLocalizedFeeType();
+//  if (!fee.empty())
+//    append(fee);
 
   return result;
 }
