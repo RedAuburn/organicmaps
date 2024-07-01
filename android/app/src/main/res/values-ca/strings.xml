@@ -822,6 +822,8 @@
 	<string name="website_menu">Enllaç del menú</string>
 	<!-- Button in the Place Page which opens a restaurant or other food place's menu in a browser -->
 	<string name="view_menu">Veure menú</string>
+	<!-- add ios to tags when adding display for ios -->
+	<string name="collection_times_title">Temps de recollida</string>
 
 	<!-- SECTION: Types -->
 	<string name="type.addr_interpolation">Adreça/Bloc</string>

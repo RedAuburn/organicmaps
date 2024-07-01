@@ -810,6 +810,8 @@
 	<string name="website_menu">Link al menu</string>
 	<!-- Button in the Place Page which opens a restaurant or other food place's menu in a browser -->
 	<string name="view_menu">Visualizza menu</string>
+	<!-- add ios to tags when adding display for ios -->
+	<string name="collection_times_title">Tempi di raccolta</string>
 
 	<!-- SECTION: Types -->
 	<string name="type.addr_interpolation">Indirizzo/Blocco</string>

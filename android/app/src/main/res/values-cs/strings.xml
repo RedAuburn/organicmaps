@@ -789,6 +789,8 @@
 	<string name="website_menu">Odkaz na menu</string>
 	<!-- Button in the Place Page which opens a restaurant or other food place's menu in a browser -->
 	<string name="view_menu">Zobrazit menu</string>
+	<!-- add ios to tags when adding display for ios -->
+	<string name="collection_times_title">Doba sběru</string>
 
 	<!-- SECTION: Types -->
 	<string name="type.addr_interpolation">Adresa/blok</string>

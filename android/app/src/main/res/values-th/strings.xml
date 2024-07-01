@@ -777,6 +777,8 @@
 	<string name="website_menu">ลิงค์เมนู</string>
 	<!-- Button in the Place Page which opens a restaurant or other food place's menu in a browser -->
 	<string name="view_menu">ดูเมนู</string>
+	<!-- add ios to tags when adding display for ios -->
+	<string name="collection_times_title">คอลเลกชันไทม์ส</string>
 
 	<!-- SECTION: Types -->
 	<string name="type.addr_interpolation">ที่อยู่/บล็อค</string>

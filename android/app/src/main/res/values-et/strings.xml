@@ -816,6 +816,8 @@
 	<string name="website_menu">Menüü link</string>
 	<!-- Button in the Place Page which opens a restaurant or other food place's menu in a browser -->
 	<string name="view_menu">Menüü vaatamine</string>
+	<!-- add ios to tags when adding display for ios -->
+	<string name="collection_times_title">Kogumisajad</string>
 
 	<!-- SECTION: Types -->
 	<string name="type.addr_interpolation">Aadress/plokk</string>

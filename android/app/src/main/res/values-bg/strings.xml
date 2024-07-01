@@ -745,6 +745,8 @@
 	<string name="website_menu">Връзка към менюто</string>
 	<!-- Button in the Place Page which opens a restaurant or other food place's menu in a browser -->
 	<string name="view_menu">Преглед на менюто</string>
+	<!-- add ios to tags when adding display for ios -->
+	<string name="collection_times_title">Времена за събиране</string>
 
 	<!-- SECTION: Types -->
 	<string name="type.addr_interpolation">Адрес/Блок</string>

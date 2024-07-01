@@ -864,6 +864,8 @@
 	<string name="website_menu">Menu Link</string>
 	<!-- Button in the Place Page which opens a restaurant or other food place's menu in a browser -->
 	<string name="view_menu">View Menu</string>
+	<!-- add ios to tags when adding display for ios -->
+	<string name="collection_times_title">Collection Times</string>
 
 	<!-- SECTION: Types -->
 	<string name="type.addr_interpolation">Address/Block</string>
