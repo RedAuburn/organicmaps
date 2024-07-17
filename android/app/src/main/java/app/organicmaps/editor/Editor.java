@@ -55,6 +55,7 @@ public final class Editor
 
   public static native boolean nativeShouldShowEditPlace();
   public static native boolean nativeShouldShowAddPlace();
+  public static native boolean nativeShouldShowAddNote();
   public static native boolean nativeShouldShowAddBusiness();
   @NonNull
   public static native int[] nativeGetEditableProperties();
