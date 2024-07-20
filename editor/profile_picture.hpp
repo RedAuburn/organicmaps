@@ -4,11 +4,10 @@
 
 namespace editor
 {
-class ProfilePicture
-{
-public:
-    // Returns downloaded image or cached image if one exists.
-    // if not, an empty string is returned.
-    static std::string download(const std::string& pic_url);
-};
+  class ProfilePicture
+  {
+  public:
+      static std::string getCachedFile();
+      static std::string getOnlineFile(const std::string& pic_url);
+  };
 }

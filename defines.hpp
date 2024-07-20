@@ -78,7 +78,6 @@
 #define WORLD_COASTS_FILE_NAME "WorldCoasts"
 
 #define SETTINGS_FILE_NAME "settings.ini"
-#define PROFILE_PICTURE_FILENAME "profile_picture"
 #define MARKETING_SETTINGS_FILE_NAME "marketing_settings.ini"
 
 #define SEARCH_CATEGORIES_FILE_NAME "categories.txt"
@@ -114,3 +113,6 @@
 #define LOCALIZATION_DESCRIPTION_SUFFIX " Description"
 
 #define BUILDING_PARTS_MAPPING_FILE "building_parts_mapping.bin"
+
+#define PROFILEPICTURE_FILENAME "profile_picture"
+#define PROFILEPICTURE_HASH_TAG "ProfilePictureHash"

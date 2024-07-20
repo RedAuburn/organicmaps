@@ -68,7 +68,7 @@ public class ProfileFragment extends BaseMwmToolbarFragment
       ThreadPool.getWorker().execute(() -> {
         // Get/Display cached values first
         final int cachedProfileEditCount = OsmOAuth.getOsmChangesetsCount(requireContext(), false);
-        final String cachedProfilePicture = OsmOAuth.getProfilePicturePath(requireContext(), false);
+        final String cachedProfilePicture = OsmOAuth.getCachedOsmProfileImage();
         final String cachedProfileUsername = OsmOAuth.getUsername(requireContext(), false);
 
         UiThread.run(() -> {
@@ -89,12 +89,12 @@ public class ProfileFragment extends BaseMwmToolbarFragment
             UiUtils.show(mProfileInfoLoading);
             final int newProfileEditCount = OsmOAuth.getOsmChangesetsCount(requireContext(), true);
             final String newProfileUsername = OsmOAuth.getUsername(requireContext(), true);
-            final String newProfilePicture = OsmOAuth.getProfilePicturePath(requireContext(), true);
+            final String newProfilePicture = OsmOAuth.getOnlineOsmProfileImage(requireContext());
 
             UiThread.run(() -> {
               mEditsSent.setText(NumberFormat.getInstance().format(newProfileEditCount));
               mProfileName.setText(newProfileUsername);
-              // Needed in case user removed picture online, to
+              // Needed in case user removed picture online
               if (!newProfilePicture.isEmpty())
                 mProfileImage.setImageBitmap(BitmapFactory.decodeFile(newProfilePicture));
 

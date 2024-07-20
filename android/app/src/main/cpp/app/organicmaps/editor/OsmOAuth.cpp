@@ -72,12 +72,21 @@ Java_app_organicmaps_editor_OsmOAuth_nativeGetOsmChangesetsCount(JNIEnv * env, j
 }
 
 JNIEXPORT jstring JNICALL
-Java_app_organicmaps_editor_OsmOAuth_nativeGetOsmProfilePicturePath(JNIEnv * env, jclass, jstring oauthToken)
+Java_app_organicmaps_editor_OsmOAuth_nativeGetOnlineOsmProfileImage(JNIEnv * env, jclass, jstring oauthToken)
 {
+  // Fetch OSM profile image URL from API
   UserPreferences prefs;
   LoadOsmUserPreferences(jni::ToNativeString(env, oauthToken), prefs);
-  std::string img_path = editor::ProfilePicture::download(prefs.m_imageUrl);
-  return jni::ToJavaString(env, img_path);
+  std::string file_path = editor::ProfilePicture::getOnlineFile(prefs.m_imageUrl);
+
+  return jni::ToJavaString(env, file_path);
+}
+
+JNIEXPORT jstring JNICALL
+Java_app_organicmaps_editor_OsmOAuth_nativeGetCachedOsmProfileImage(JNIEnv * env, jclass)
+{
+  std::string file_path = editor::ProfilePicture::getCachedFile();
+  return jni::ToJavaString(env, file_path);
 }
 
 JNIEXPORT jstring JNICALL

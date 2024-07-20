@@ -76,14 +76,15 @@ public final class OsmOAuth
     return prefs.getString(PREF_OSM_USERNAME, "Error: should be unreachable");
   }
 
-  public static String getProfilePicturePath(@NonNull Context context, boolean internet_allowed)
+  public static String getOnlineOsmProfileImage(@NonNull Context context)
   {
-    String token = "";
-    if (internet_allowed)
-      token = getAuthToken(context);
+    String token = getAuthToken(context);
+    return nativeGetOnlineOsmProfileImage(token);
+  }
 
-    // If token is empty, will only return cached image
-    return nativeGetOsmProfilePicturePath(token);
+  public static String getCachedOsmProfileImage()
+  {
+    return nativeGetCachedOsmProfileImage();
   }
 
   public static void setAuthorization(@NonNull Context context, String oauthToken, String username)
@@ -137,7 +138,11 @@ public final class OsmOAuth
 
   @WorkerThread
   @Nullable
-  public static native String nativeGetOsmProfilePicturePath(String oauthToken);
+  public static native String nativeGetOnlineOsmProfileImage(String oauthToken);
+
+  @WorkerThread
+  @Nullable
+  public static native String nativeGetCachedOsmProfileImage();
 
   @WorkerThread
   @NonNull
