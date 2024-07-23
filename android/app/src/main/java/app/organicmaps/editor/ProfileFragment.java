@@ -68,8 +68,8 @@ public class ProfileFragment extends BaseMwmToolbarFragment
       ThreadPool.getWorker().execute(() -> {
         // Get/Display cached values first
         final int cachedProfileEditCount = OsmOAuth.getOsmChangesetsCount(requireContext(), false);
-        final String cachedProfilePicture = OsmOAuth.getCachedOsmProfileImage();
         final String cachedProfileUsername = OsmOAuth.getUsername(requireContext(), false);
+        final String cachedProfilePicture = OsmOAuth.getCachedOsmProfileImage();
 
         UiThread.run(() -> {
           mEditsSent.setText(NumberFormat.getInstance().format(cachedProfileEditCount));
