@@ -5,13 +5,14 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
-import app.organicmaps.base.BaseMwmFragmentActivity;
 import app.organicmaps.display.DisplayChangedListener;
 import app.organicmaps.display.DisplayManager;
 import app.organicmaps.display.DisplayType;
+import app.organicmaps.util.ThemeUtils;
 
-public class MapPlaceholderActivity extends BaseMwmFragmentActivity implements DisplayChangedListener
+public class MapPlaceholderActivity extends AppCompatActivity implements DisplayChangedListener
 {
   @SuppressWarnings("NotNullFieldNotInitialized")
   @NonNull
@@ -19,11 +20,11 @@ public class MapPlaceholderActivity extends BaseMwmFragmentActivity implements D
   private boolean mRemoveDisplayListener = true;
 
   @Override
-  protected void onSafeCreate(@Nullable Bundle savedInstanceState)
+  protected void onCreate(@Nullable Bundle savedInstanceState)
   {
-    super.onSafeCreate(savedInstanceState);
+    super.onCreate(savedInstanceState);
+    setTheme(ThemeUtils.isNightTheme(getApplicationContext()) ? R.style.MwmTheme_Night_FullscreenMenu : R.style.MwmTheme_FullscreenMenu);
     setContentView(R.layout.activity_map_placeholder);
-
     mDisplayManager = DisplayManager.from(this);
     mDisplayManager.addListener(DisplayType.Device, this);
 
@@ -40,10 +41,8 @@ public class MapPlaceholderActivity extends BaseMwmFragmentActivity implements D
     onTaskFinishedCallback.run();
   }
 
-  @Override
   protected void onSafeDestroy()
   {
-    super.onSafeDestroy();
     if (mRemoveDisplayListener)
       mDisplayManager.removeListener(DisplayType.Device);
   }
