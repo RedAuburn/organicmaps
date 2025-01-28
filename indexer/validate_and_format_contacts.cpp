@@ -16,12 +16,17 @@ static auto const s_twitterRegex = regex(R"(^@?[A-Za-z0-9_]{1,15}$)");
 static auto const s_badVkRegex = regex(R"(^\d\d\d.+$)");
 static auto const s_goodVkRegex = regex(R"(^[A-Za-z0-9_.]{5,32}$)");
 static auto const s_lineRegex = regex(R"(^[a-z0-9-_.]{4,20}$)");
+static auto const s_fediverseHandleRegex = regex(R"(@?[a-zA-Z0-9-_.]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})");
+static auto const s_fediverseUrlRegex = regex(R"(^(?:https?:\/\/)?(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}\/@[a-zA-Z0-9-_.]+(?:\/)?$)");
+static auto const s_blueskyRegex = regex(R"(^[A-Za-z0-9-]{3,18}(?:\.[A-Za-z0-9]+)+$)");
 
 constexpr string_view kFacebook{"contact:facebook"};
 constexpr string_view kInstagram{"contact:instagram"};
 constexpr string_view kTwitter{"contact:twitter"};
 constexpr string_view kVk{"contact:vk"};
 constexpr string_view kLine{"contact:line"};
+constexpr string_view kFediverse{"contact:mastodon"};
+constexpr string_view kBluesky{"contact:bluesky"};
 
 constexpr string_view kProfilePhp{"profile.php"};
 
@@ -41,6 +46,7 @@ constexpr string_view kDotVkontakteRu{".vkontakte.ru"};
 constexpr string_view kLineMe{"line.me"};
 constexpr string_view kPageLineMe{"page.line.me"};
 constexpr string_view kDotLineMe{".line.me"};
+constexpr string_view kBskyApp{"bsky.app"};
 
 // URLs constants
 constexpr string_view kUrlFacebook{"https://facebook.com/"};
@@ -48,6 +54,7 @@ constexpr string_view kUrlInstagram{"https://instagram.com/"};
 constexpr string_view kUrlTwitter{"https://twitter.com/"};
 constexpr string_view kUrlVk{"https://vk.com/"};
 constexpr string_view kUrlLine{"https://line.me/R/ti/p/@"};
+constexpr string_view kUrlBluesky{"https://bsky.app/profile/"};
 constexpr string_view kHttp{"http://"};
 constexpr string_view kHttps{"https://"};
 
@@ -63,6 +70,13 @@ size_t GetProtocolNameLength(string const & website)
 bool IsProtocolSpecified(string const & website)
 {
   return 0 != GetProtocolNameLength(website);
+}
+
+string fediverseHandleToUrl(string_view handle)
+{
+    // Convert stored username@domain.name to https://domain.name/username
+    vector<string_view> const handleElements = strings::Tokenize(handle, "@");
+    return string{kHttps}.append(handleElements[1]).append("/@").append(handleElements[0]);
 }
 
 // TODO: Current implementation looks only for restricted symbols from ASCII block ignoring
@@ -239,16 +253,16 @@ string ValidateAndFormat_vk(string const & vkPage)
   return {};
 }
 
-// Strip '%40' and `@` chars from Line ID start.
-string stripAtSymbol(string const & lineId)
+// Strip '%40' and `@` chars from string start if they exist.
+string stripAtSymbol(string const & inputString)
 {
-  if (lineId.empty())
-    return lineId;
-  if (lineId.front() == '@')
-    return lineId.substr(1);
-  if (lineId.starts_with("%40"))
-    return lineId.substr(3);
-  return lineId;
+  if (inputString.empty())
+    return inputString;
+  if (inputString.front() == '@')
+    return inputString.substr(1);
+  if (inputString.starts_with("%40"))
+    return inputString.substr(3);
+  return inputString;
 }
 
 string ValidateAndFormat_contactLine(string const & linePage)
@@ -313,6 +327,54 @@ string ValidateAndFormat_contactLine(string const & linePage)
     if (linePage.starts_with(kHttps))
       return linePage.substr(8);
     return linePage;
+  }
+
+  return {};
+}
+
+string ValidateAndFormat_fediverse(string const & fediPage)
+{
+  if (fediPage.empty())
+    return {};
+
+  // Parse @{username}@{domain.name} format
+  else if (regex_match(fediPage, s_fediverseHandleRegex))
+    return stripAtSymbol(fediPage);
+
+  // Parse https://{domain.name}/@{username} format
+  else if (regex_match(fediPage, s_fediverseUrlRegex))
+  {
+    url::Url const url = url::Url::FromString(fediPage);
+    string const domain = strings::MakeLowerCase(url.GetHost());
+    string username = stripAtSymbol(url.GetPath()); // Strip '@' symbol
+    username.erase(username.find_last_not_of('/') + 1); // Strip last '/' symbol
+    return username.append("@").append(domain);
+  }
+  else
+    return {};
+}
+
+string ValidateAndFormat_bluesky(string const & bskyPage)
+{
+  if (bskyPage.empty())
+    return {};
+
+  // Parse @username.instance_name format
+  if (regex_match(bskyPage, s_blueskyRegex))
+    return stripAtSymbol(bskyPage);
+
+  // Parse https://bsky.app/profile/{username.instance_name} format
+  if (!ValidateWebsite(bskyPage))
+    return {};
+
+  url::Url const url = url::Url::FromString(bskyPage);
+  string const domain = strings::MakeLowerCase(url.GetHost());
+  if (domain == kBskyApp)
+  {
+    auto webPath = url.GetPath();
+    webPath.erase(0,8); // Strip "profile/" (8 chars, first '/' is stripped by getPath)
+    webPath.erase(webPath.find_last_not_of('/') + 1); // Strip last '/' symbol if exists
+    return webPath;
   }
 
   return {};
@@ -449,9 +511,26 @@ bool ValidateLinePage(string const & page)
   return (domain == kLineMe || domain.ends_with(kDotLineMe));
 }
 
+bool ValidateFediversePage(string const & page)
+{
+  if (page.empty())
+    return true;
+
+  return regex_match(page, s_fediverseHandleRegex) || regex_match(page, s_fediverseUrlRegex);
+}
+
+bool ValidateBlueskyPage(string const & page)
+{
+  if (!ValidateWebsite(page))
+    return regex_match(page, s_blueskyRegex);
+
+  string const domain = strings::MakeLowerCase(url::Url::FromString(page).GetHost());
+  return domain == kBskyApp;
+}
+
 bool isSocialContactTag(string_view tag)
 {
-  return tag == kInstagram || tag == kFacebook || tag == kTwitter || tag == kVk || tag == kLine;
+  return tag == kInstagram || tag == kFacebook || tag == kTwitter || tag == kVk || tag == kLine || tag == kFediverse;
 }
 
 bool isSocialContactTag(MapObject::MetadataID const metaID)
@@ -460,7 +539,8 @@ bool isSocialContactTag(MapObject::MetadataID const metaID)
          metaID == MapObject::MetadataID::FMD_CONTACT_FACEBOOK ||
          metaID == MapObject::MetadataID::FMD_CONTACT_TWITTER ||
          metaID == MapObject::MetadataID::FMD_CONTACT_VK ||
-         metaID == MapObject::MetadataID::FMD_CONTACT_LINE;
+         metaID == MapObject::MetadataID::FMD_CONTACT_LINE ||
+         metaID == MapObject::MetadataID::FMD_CONTACT_FEDIVERSE;
 }
 
 // Functions ValidateAndFormat_{facebook,instagram,twitter,vk}(...) by default strip domain name
@@ -477,6 +557,10 @@ string socialContactToURL(string_view tag, string_view value)
     return string{kUrlTwitter}.append(value);
   if (tag == kVk)
     return string{kUrlVk}.append(value);
+  if (tag == kFediverse)
+    return fediverseHandleToUrl(value);
+  if (tag == kBluesky) // In future
+    return string{kUrlBluesky}.append(value);
   if (tag == kLine)
   {
     if (value.find('/') == string::npos) // 'value' is a username.
@@ -502,6 +586,10 @@ string socialContactToURL(MapObject::MetadataID metaID, string_view value)
       return string{kUrlTwitter}.append(value);
     case MapObject::MetadataID::FMD_CONTACT_VK:
       return string{kUrlVk}.append(value);
+    case MapObject::MetadataID::FMD_CONTACT_FEDIVERSE:
+      return fediverseHandleToUrl(value);
+    case MapObject::MetadataID::FMD_CONTACT_BLUESKY:
+      return string{kUrlBluesky}.append(value);
     case MapObject::MetadataID::FMD_CONTACT_LINE:
       if (value.find('/') == string::npos) // 'value' is a username.
         return string{kUrlLine}.append(value);
@@ -511,5 +599,4 @@ string socialContactToURL(MapObject::MetadataID metaID, string_view value)
       return string{value};
   }
 }
-
 } // namespace osm
