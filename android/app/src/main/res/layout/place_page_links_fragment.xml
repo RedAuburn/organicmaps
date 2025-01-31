@@ -7,6 +7,8 @@
   <include layout="@layout/place_page_website" />
   <include layout="@layout/place_page_website_menu" />
   <include layout="@layout/place_page_email" />
+  <include layout="@layout/place_page_bluesky" />
+  <include layout="@layout/place_page_fediverse" />
   <include layout="@layout/place_page_facebook" />
   <include layout="@layout/place_page_instagram" />
   <include layout="@layout/place_page_twitter" />
