@@ -767,7 +767,7 @@ string DetermineSurfaceAndHighwayType(OsmElement * p)
     {
       if (isPaved)
       {
-        if (highway == "motorway" || highway == "trunk")
+        if (highway == "motorway" || highway == "trunk" || highway == "primary" || highway == "secondary" || highway == "tertiary")
           return {};
         else
           isGood = false;
