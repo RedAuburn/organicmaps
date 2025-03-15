@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
@@ -469,7 +470,6 @@ public class PlacePageView extends Fragment implements View.OnClickListener,
     final String outdoorSeating = mMapObject.getMetadata(Metadata.MetadataType.FMD_OUTDOOR_SEATING);
     refreshMetadataOrHide(outdoorSeating.equals("yes") ? getString(R.string.outdoor_seating) : "", mOutdoorSeating, mTvOutdoorSeating);
 
-//    showTaxiOffer(mapObject);
 
     if (RoutingController.get().isNavigating() || RoutingController.get().isPlanning())
     {
@@ -563,19 +563,6 @@ public class PlacePageView extends Fragment implements View.OnClickListener,
       mTvLatlon.setText(latLon);
   }
 
-  private void addOrganisation()
-  {
-    ((MwmActivity) requireActivity()).showPositionChooserForEditor(true, false);
-  }
-
-  private void addPlace()
-  {
-    ((MwmActivity) requireActivity()).showPositionChooserForEditor(false, true);
-  }
-
-  /// @todo
-  /// - Why ll__place_editor and ll__place_latlon check if (mMapObject == null)
-
   @Override
   public void onClick(View v)
   {
@@ -587,11 +574,26 @@ public class PlacePageView extends Fragment implements View.OnClickListener,
       mPlacePageViewListener.onPlacePageRequestToggleState();
     }
     else if (id == R.id.ll__place_editor)
-      ((MwmActivity) requireActivity()).showEditor();
+    {
+      if (Editor.nativeShouldEnableEditPlace())
+        ((MwmActivity) requireActivity()).showEditor();
+      else
+        Toast.makeText(requireContext(), R.string.editor_disabled, Toast.LENGTH_LONG).show();
+    }
     else if (id == R.id.ll__add_organisation)
-      addOrganisation();
+    {
+      if (Editor.nativeShouldShowAddBusiness())
+        ((MwmActivity) requireActivity()).showPositionChooserForEditor(true, false);
+      else
+        Toast.makeText(requireContext(), R.string.editor_disabled, Toast.LENGTH_LONG).show();
+    }
     else if (id == R.id.ll__place_add)
-      addPlace();
+    {
+      if (Editor.nativeShouldShowAddPlace())
+        ((MwmActivity) requireActivity()).showPositionChooserForEditor(false, true);
+      else
+        Toast.makeText(requireContext(), R.string.editor_disabled, Toast.LENGTH_LONG).show();
+    }
     else if (id == R.id.ll__place_latlon)
     {
       final int formatIndex = visibleCoordsFormat.indexOf(mCoordsFormat);

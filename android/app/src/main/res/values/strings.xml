@@ -933,4 +933,5 @@
     <string name="uri_open_location_failed">No app installed that can open the location</string>
     <!-- preference string for using auto theme only in navigation mode -->
     <string name="nav_auto">Auto in navigation</string>
+    <string name="editor_disabled">Editing disabled, please download the latest map data</string>
 </resources>
